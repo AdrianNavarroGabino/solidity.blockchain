@@ -32,4 +32,23 @@ contract LoopsConditionals {
         
         return auxSum;
     }
+
+    function sumRest(string memory operation, uint a, uint b) public pure returns (uint) {
+        bytes32 hashOperation = keccak256(abi.encodePacked(operation));
+        if(hashOperation == keccak256(abi.encodePacked("suma"))) {
+            return a + b;
+        }
+        else if(hashOperation == keccak256(abi.encodePacked("resta"))) {
+            return a - b;
+        }
+        else if(hashOperation == keccak256(abi.encodePacked("multiplicacion"))) {
+            return a * b;
+        }
+        else if(hashOperation == keccak256(abi.encodePacked("division"))) {
+            return a / b;
+        }
+        else {
+            return 0;
+        }
+    }
 }
