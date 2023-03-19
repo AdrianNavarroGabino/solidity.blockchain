@@ -77,4 +77,20 @@ contract ERC20 is IERC20 {
         _transfer(from, to, amount);
         return true;
     }
+
+    function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
+        address owner = msg.sender;
+        _approve(owner, spender, allowances[owner][spender] + addedValue);
+        return true;
+    }
+
+    function decreaseAllowance(address spender, uint256 substractedValue) public virtual returns (bool) {
+        address owner = msg.sender;
+        uint256 currentAllowance = allowances[owner][spender];
+        require(currentAllowance >= substractedValue, "ERC20: decreased allowance below zero");
+        unchecked {
+            _approve(owner, spender, currentAllowance - substractedValue);
+        }
+        return true;
+    }
 }
