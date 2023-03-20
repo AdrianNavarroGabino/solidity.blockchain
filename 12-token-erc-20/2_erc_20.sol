@@ -22,7 +22,7 @@ interface IERC20 {
 
 contract ERC20 is IERC20 {
 
-    mapping(address => uint256) private balances;
+    mapping(address => uint256) private _balances;
     // Owner -> Spender -> Tokens
     mapping(address => mapping(address => uint256)) private allowances;
 
@@ -52,7 +52,7 @@ contract ERC20 is IERC20 {
     }
 
     function balanceOf(address account) public view virtual override returns (uint256) {
-        return balances[account];
+        return _balances[account];
     }
 
     function transfer(address to, uint256 amount) public virtual override returns (bool) {
@@ -92,5 +92,41 @@ contract ERC20 is IERC20 {
             _approve(owner, spender, currentAllowance - substractedValue);
         }
         return true;
+    }
+
+    function _transfer(address from, address to, uint256 amount) internal virtual {
+        require(from != address(0), "ERC20: transfer from the zero address");
+        require(to != address(0), "ERC20: transfer to the zero address");
+        _beforeTokenTransfer(from, to, amount);
+        uint256 fromBalance = _balances[from];
+        require(fromBalance >= amount, "ERC20: transferm amount exceeds balance");
+        unchecked {
+            _balances[from] = fromBalance - amount;
+        }
+        _balances[to] += amount;
+        emit Transfer(from, to, amount);
+        _afterTokenTransfer(from, to, amount);
+    }
+
+    function _mint(address account, uint amount) internal virtual {
+        require(account != address(0), "ERC20: mint to the zero address");
+        _beforeTokenTransfer(address(0), account, amount);
+        _totalSupply += amount;
+        _balances[account] += amount;
+        emit Transfer(address(0), account, amount);
+        _afterTokenTransfer(address(0), account, amount);
+    }
+
+    function _burn(address account, uint amount) internal virtual {
+        require(account != address(0), "ERC20: burn from the zero address");
+        _beforeTokenTransfer(account, address(0), amount);
+        uint256 accountBalance = _balances[account];
+        require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
+        unchecked {
+            _balances[account] = accountBalance - amount;
+        }
+        _totalSupply -= amount;
+        emit Transfer(account, address(0), amount);
+        _afterTokenTransfer(account, address(0), amount);
     }
 }
