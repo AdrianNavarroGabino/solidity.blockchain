@@ -67,4 +67,22 @@ contract ArtToken is ERC721, Ownable {
         uint SC_money = address(this).balance / 10 ** 18;
         return (SC_address, SC_money);
     }
+
+    // Obtaining all created NFT Tokens (artwork)
+    function getArtWork() public view returns (Art[] memory) {
+        return art_works;
+    }
+
+    // Obtaining a user's NFT Tokens
+    function getOwnerArtWork(address _owner) public view returns (Art[] memory) {
+        Art[] memory result = new Art[](balanceOf(_owner));
+        uint256 counter_owner = 0;
+        for(uint256 i = 0; i < art_works.length; i++) {
+            if(ownerOf(i) == _owner){
+                result[counter_owner] = art_works[i];
+                counter_owner++;
+            }
+        }
+        return result;
+    }
 }
