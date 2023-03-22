@@ -36,4 +36,11 @@ contract ArtToken is ERC721, Ownable {
     // ===================================================
     // Help Functions
     // ===================================================
+
+    // Creation of a random number (required for NFT token properties)
+    function _createRandomNum(uint256 _mod) internal view returns (uint256) {
+        bytes32 hash_randomNum = keccak256(abi.encodePacked(block.timestamp, msg.sender));
+        uint256 randomNum = uint256(hash_randomNum);
+        return randomNum % _mod;
+    }
 }
