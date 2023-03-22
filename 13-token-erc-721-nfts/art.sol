@@ -54,4 +54,17 @@ contract ArtToken is ERC721, Ownable {
         emit NewArtWork(msg.sender, COUNTER, randDna);
         COUNTER++;
     }
+
+    // NFT Token Price Update
+    function updateFee(uint256 _fee) external onlyOwner {
+        fee = _fee;
+    }
+
+    // Visualize the balance of the Smart Contract (ether)
+    function infoSmartContract() public view returns (address, uint256) {
+        address SC_address = address(this);
+        // 1 ether = 10 ** 18 wei
+        uint SC_money = address(this).balance / 10 ** 18;
+        return (SC_address, SC_money);
+    }
 }
