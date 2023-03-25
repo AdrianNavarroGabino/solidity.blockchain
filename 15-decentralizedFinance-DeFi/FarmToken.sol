@@ -63,4 +63,19 @@ contract TokenFarm {
         // Actualizar el estado del staking
         isStaking[msg.sender] = false;
     }
+
+    // Emisión de Tokens (recompensas)
+    function issueTokens() public {
+        // Unicamente ejecutable por el owner
+        require(msg.sender == owner, "No eres el owner");
+
+        // Emitir tokens a todos los stakers
+        for(uint i = 0; i < stakers.length; i++) {
+            address recipient = stakers[i];
+            uint balance = stakingBalance[recipient];
+            if(balance > 0) {
+                stellartToken.transfer(recipient, balance);
+            }
+        }
+    }
 }
