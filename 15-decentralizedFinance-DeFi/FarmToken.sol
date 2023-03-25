@@ -45,4 +45,22 @@ contract TokenFarm {
         isStaking[msg.sender] = true;
         hasStaked[msg.sender] = true;
     }
+
+    // Quitar el staking de los tokens
+    function unstakeTokens() public {
+        // Saldo del staking de un usuario
+        uint balance = stakingBalance[msg.sender];
+
+        // Se requiere una cantidad superior a 0
+        require(balance > 0, "El balance del staking es 0");
+
+        // Transferencia de los tokens al usuario
+        jamToken.transfer(msg.sender, balance);
+
+        // Resetea el balance de staking del usuario
+        stakingBalance[msg.sender] = 0;
+
+        // Actualizar el estado del staking
+        isStaking[msg.sender] = false;
+    }
 }
