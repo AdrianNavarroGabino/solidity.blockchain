@@ -24,4 +24,25 @@ contract TokenFarm {
         jamToken = _jamToken;
         owner = msg.sender;
     }
+
+    // Stake de tokens
+    function stakeTokens(uint _amount) public {
+        // Se requiere una cantidad superior a 0
+        require(_amount > 0, "La cantidad no puede ser menor a 0");
+
+        // Transferir tokens JAM al Smart Contract principal
+        jamToken.transferFrom(msg.sender, address(this), _amount);
+
+        // Actualizar el saldo del staking
+        stakingBalance[msg.sender] += _amount;
+
+        // Guardar el staker
+        if(!hasStaked[msg.sender]) {
+            stakers.push(msg.sender);
+        }
+
+        // Actualizar el estado del staking
+        isStaking[msg.sender] = true;
+        hasStaked[msg.sender] = true;
+    }
 }
