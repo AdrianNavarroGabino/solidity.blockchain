@@ -57,16 +57,27 @@ contract Loteria is ERC20, Ownable {
         address addr_personal_contract = address(new BoletosNFTs(msg.sender, address(this), nft));
         usuario_contract[msg.sender] = addr_personal_contract;
     }
+
+    // Informacion de un usuario
+    function usersInfo(address _account) public view returns (address) {
+        return usuario_contract[_account];
+    }
 }
 
 // Smart Contract de NFTs
 contract MainERC721 is ERC721 {
 
+    address public direccionLoteria;
+
     // Constructor
-    constructor() ERC721("Loteria", "STE") {}
+    constructor() ERC721("Loteria", "STE") {
+        direccionLoteria = msg.sender;
+    }
 
     // Creacion de NFTs
     function safeMint(address _propietario, uint256 _boleto) public {
+        require(msg.sender == Loteria(direccionLoteria).usersInfo(_propietario),
+            "No tienes permisos para ejecutar esta funcion");
         _safeMint(_propietario, _boleto);
     }
 }
@@ -89,6 +100,8 @@ contract BoletosNFTs {
 
     // Conversion de los numeros de los boletos de loteria
     function mintBoleto(address _propietario, uint _boleto) public {
+        require(msg.sender == propietario.contratoPadre,
+            "No tienes permisos para ejecutar esta funcion");
         MainERC721(propietario.contratoNFT).safeMint(_propietario, _boleto);
     }
 }
