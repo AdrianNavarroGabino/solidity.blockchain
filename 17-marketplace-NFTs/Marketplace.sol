@@ -64,4 +64,30 @@ contract Marketplace is ReentrancyGuard {
             msg.sender
         );
     }
+
+    function purchaseItem(uint _itemId) external payable nonReentrant {
+        uint _totalPrice = getTotalPrice(_itemId);
+        Item storage item = items[_itemId];
+
+        require(_itemId > 0 && _itemId <= itemCount);
+        require(msg.value >= _totalPrice);
+        require(!item.sold);
+
+        item.seller.transfer(item.price);
+        feeAccount.transfer(_totalPrice - item.price);
+        item.sold = true;
+        item.nft.transferFrom(address(this), msg.sender, item.tokenId);
+        emit Bought(
+            _itemId,
+            address(item.nft),
+            item.tokenId,
+            item.price,
+            item.seller,
+            msg.sender
+        );
+    }
+
+    function getTotalPrice(uint _itemId) view public returns(uint) {
+        return ((items[_itemId].price * (100 + feePercent)) / 100);
+    }
 }
